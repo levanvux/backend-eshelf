@@ -9,9 +9,11 @@ if (!connectionString) {
   throw new Error('DATABASE_URL is not defined');
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
 const adapter = new PrismaPg({
   connectionString,
 });
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
