@@ -17,6 +17,10 @@ import { LoggerModule } from 'nestjs-pino';
     ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
     LoggerModule.forRoot({
       pinoHttp: {
+        redact: {
+          paths: ['req.headers.authorization', 'req.headers.cookie'],
+          censor: '[REDACTED]',
+        },
         transport:
           process.env['NODE_ENV'] !== 'production'
             ? {
