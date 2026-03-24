@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { UploadModule } from './upload/upload.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
+import { LoggerModule } from 'nestjs-pino';
 
 @Module({
   imports: [
@@ -14,6 +15,32 @@ import { ConfigModule } from '@nestjs/config';
     UploadModule,
     PrismaModule,
     ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
+    LoggerModule.forRoot({
+      pinoHttp: {
+        redact: {
+          paths: [
+            'req.headers.authorization',
+            'req.headers.cookie',
+            'req.body.password',
+            'req.body.refreshToken',
+          ],
+          censor: '[REDACTED]',
+        },
+        transport:
+          process.env['NODE_ENV'] !== 'production'
+            ? {
+                target: 'pino-pretty',
+                options: {
+                  colorize: true,
+                  singleLine: true,
+                  translateTime: 'SYS:HH:MM:ss',
+                  ignore: 'pid,hostname',
+                },
+              }
+            : undefined,
+        level: process.env['NODE_ENV'] !== 'production' ? 'debug' : 'info',
+      },
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],
