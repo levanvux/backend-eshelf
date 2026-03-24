@@ -18,7 +18,12 @@ import { LoggerModule } from 'nestjs-pino';
     LoggerModule.forRoot({
       pinoHttp: {
         redact: {
-          paths: ['req.headers.authorization', 'req.headers.cookie'],
+          paths: [
+            'req.headers.authorization',
+            'req.headers.cookie',
+            'req.body.password',
+            'req.body.refreshToken',
+          ],
           censor: '[REDACTED]',
         },
         transport:
