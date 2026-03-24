@@ -19,6 +19,12 @@ enum Role {
   ADMIN
 }
 
+enum Language {
+  ENGLISH
+  VIETNAMESE
+  OTHER
+}
+
 model User {
   id        Int      @id @default(autoincrement())
   name      String
@@ -26,5 +32,96 @@ model User {
   password  String
   role      Role     @default(USER)
   avatar    String?
+  favorites Favorite[]
+  comments  Comment[]
+  createdAt DateTime @default(now())
+}
+
+model Book {
+  id          Int      @id @default(autoincrement())
+  isbn        String   @unique
+  title       String
+  description String?
+  year        Int
+  language    Language @default(VIETNAMESE)
+  pages       Int
+  size        Int?
+  coverImage    String?
+  pdfPath     String?
+  viewCount   Int       @default(0)
+  publisherId Int
+  publisher   Publisher @relation(fields: [publisherId], references: [id])
+  authors     BookAuthor[]
+  translators BookTranslator[]
+  genres      BookGenre[]
+  favorites   Favorite[]
+  comments    Comment[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Publisher {
+  id        Int      @id @default(autoincrement())
+  name      String
+  books     Book[]
+}
+
+model Author {
+  id        Int      @id @default(autoincrement())
+  name      String
+  books     BookAuthor[]
+}
+
+model Translator {
+  id        Int      @id @default(autoincrement())
+  name      String
+  books     BookTranslator[]
+}
+
+model Genre {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  books BookGenre[]
+}
+
+model BookAuthor {
+  bookId   Int
+  authorId Int
+  book     Book   @relation(fields: [bookId], references: [id])
+  author   Author @relation(fields: [authorId], references: [id])
+  @@id([bookId, authorId])
+}
+
+model BookTranslator {
+  bookId       Int
+  translatorId Int
+  book         Book       @relation(fields: [bookId], references: [id])
+  translator   Translator @relation(fields: [translatorId], references: [id])
+  @@id([bookId, translatorId])
+}
+
+model BookGenre {
+  bookId    Int
+  genreId   Int
+  book      Book      @relation(fields: [bookId], references: [id])
+  genre     Genre     @relation(fields: [genreId], references: [id])
+  @@id([bookId, genreId])
+}
+
+model Favorite {
+  userId Int
+  bookId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book   Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  @@id([userId, bookId])
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String
+  userId    Int
+  bookId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
 }
