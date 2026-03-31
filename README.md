@@ -6,6 +6,12 @@
 
 Backend API for [eShelf](https://github.com/levanvux/eshelf) - an online reading platform powered by [Nest](https://github.com/nestjs/nest) framework.
 
+## Initialize docker-compose
+
+```bash
+$ docker compose up -d
+```
+
 ## Project setup
 
 ```bash
